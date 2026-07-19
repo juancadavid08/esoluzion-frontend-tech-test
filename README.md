@@ -131,6 +131,134 @@ front/
 
 - ESLint configurado para TypeScript/React.
 
+## Verificacion funcional
+
+Entorno de prueba:
+
+- SO: Windows
+- Node.js: 18+
+- npm: 9+
+
+### Caso 1 - Carga de productos (PLP)
+
+Pasos:
+
+1. Ejecutar `npm run start`.
+2. Abrir la aplicacion en el navegador.
+
+Resultado esperado:
+
+- Se muestra el listado de productos en grid responsive.
+
+Resultado obtenido:
+
+- OK.
+
+### Caso 2 - Filtro por marca/modelo
+
+Pasos:
+
+1. Escribir texto en el input de busqueda (por ejemplo: `Acer`).
+
+Resultado esperado:
+
+- La lista se filtra en tiempo real por marca/modelo.
+
+Resultado obtenido:
+
+- OK.
+
+### Caso 3 - Navegacion a detalle (PDP)
+
+Pasos:
+
+1. Hacer click en un producto del listado.
+
+Resultado esperado:
+
+- Navega a `/product/:id` y muestra detalle del producto.
+
+Resultado obtenido:
+
+- OK.
+
+### Caso 4 - Selectores de color y almacenamiento
+
+Pasos:
+
+1. En la vista PDP, revisar los selectores de almacenamiento y color.
+
+Resultado esperado:
+
+- Se muestran opciones y queda una seleccion por defecto.
+
+Resultado obtenido:
+
+- OK.
+
+### Caso 5 - Anadir al carrito y persistencia
+
+Pasos:
+
+1. Pulsar `Anadir`.
+2. Verificar contador en cabecera.
+3. Recargar pagina.
+
+Resultado esperado:
+
+- El contador incrementa y persiste tras recarga.
+
+Resultado obtenido:
+
+- OK.
+
+### Caso 6 - Cache cliente (TTL 1 hora)
+
+Pasos:
+
+1. Cargar PLP/PDP al menos una vez.
+2. Revisar claves de cache en `localStorage`.
+
+Resultado esperado:
+
+- Datos cacheados con timestamp y expiracion logica de 1 hora.
+
+Resultado obtenido:
+
+- OK.
+
+## Evidencias (imagenes)
+
+Si, se pueden poner imagenes en el README y es recomendable para una prueba tecnica.
+
+Sugerencia de estructura:
+
+```text
+front/
+  docs/
+    images/
+      actions.png
+      plp.png
+      pdp.png
+      cart-counter.png
+```
+
+Ejemplo en Markdown:
+
+```md
+![PLP](docs/images/plp.png)
+![PDP](docs/images/pdp.png)
+![Cart Counter](docs/images/cart-counter.png)
+![GitHub Actions](docs/images/actions.png)
+```
+
+Evidencias incluidas:
+
+![PLP](docs/images/plp.png)
+![PDP](docs/images/pdp.png)
+![Cart Counter](docs/images/cart-counter.png)
+![GitHub Actions](docs/images/actions.png)
+
 ## Mejoras futuras sugeridas
 
 - Mas tests de integracion (PDP y flujo de add to cart).

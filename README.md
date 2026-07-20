@@ -17,6 +17,8 @@ Aplicacion con dos vistas:
 - React Router DOM
 - ESLint
 - Vitest + Testing Library
+- Playwright (Chromium desktop y móvil)
+- Prettier + ESLint
 - localStorage para cache y persistencia
 
 ## API utilizada
@@ -33,13 +35,14 @@ Endpoints:
 
 ## Requisitos
 
-- Node.js 18+ recomendado
+- Node.js 20.19+ recomendado
 - npm 9+ recomendado
 
 ## Instalacion
 
 ```bash
-cd "d:\PROYECTOS\PRUEBA ESoluzion\front"
+git clone https://github.com/juancadavid08/frontend-tech-test.git
+cd frontend-tech-test
 npm install
 ```
 
@@ -80,6 +83,10 @@ npm run build
 - Boton de anadir que envia `{ id, colorCode, storageCode }`.
 - Persistencia del contador de carrito entre vistas y recargas.
 
+## Decisión sobre TypeScript
+
+El PDF original indica una preferencia por JavaScript ES6 sin TypeScript. Las recomendaciones complementarias de esta convocatoria, sin embargo, valoran positivamente TypeScript. Se ha priorizado esta última indicación para aportar contratos explícitos entre dominio, aplicación e infraestructura, detección temprana de errores y mejor mantenibilidad, sin añadir lógica funcional no solicitada.
+
 ## Cache en cliente (1 hora)
 
 Se implementa cache en `localStorage` para:
@@ -91,16 +98,23 @@ Cada entrada almacena timestamp y datos, con expiracion de 1 hora. Al expirar, s
 
 ## Nota sobre el contador del carrito
 
-Durante las pruebas, el endpoint `POST /api/cart` devuelve `count = 1` de forma constante.
-Para mantener el comportamiento esperado por el enunciado (contador visible y acumulado), se aplica un fallback cliente:
+Durante las pruebas se ha observado una limitación en el backend externo proporcionado por el ejercicio: el endpoint `POST /api/cart` devuelve `count = 1` de forma constante, aunque se realicen varias operaciones de añadido correctamente.
 
-- Si el `count` del servidor no aumenta, se incrementa el valor persistido localmente.
+El frontend trata al backend como fuente de verdad y muestra exactamente el valor `count` de su respuesta. Por tanto, el contador permanece en `1`. No se acumula artificialmente en cliente porque eso podría desincronizar la interfaz respecto al servidor y modificar el significado de su contrato.
+
+La aplicación persiste el último valor confirmado en `localStorage` para conservarlo entre navegación y recargas. En un backend productivo, `count` debería representar el total actual del carrito del usuario.
 
 ## Estructura principal
+
+La explicación visual completa, con diagramas de capas, componentes, navegación, caché, carrito y pruebas, está disponible en [docs/architecture.md](docs/architecture.md).
 
 ```text
 front/
   src/
+    domain/                       # Entidades y tipos de negocio
+    application/ports/            # Contratos independientes de React/fetch
+    infrastructure/http/          # Adaptador de API REST
+    infrastructure/storage/       # Adaptador de cache local
     components/
       Loader.tsx
       ProductItem.tsx
@@ -115,7 +129,7 @@ front/
     App.tsx
     index.css
     main.tsx
-    types.d.ts
+  e2e/                             # Flujos completos Playwright
   index.html
   package.json
   tsconfig.json
@@ -124,8 +138,10 @@ front/
 
 ## Testing
 
-- Test basico incluido para render de cabecera.
-- Runner: Vitest.
+- 9 tests unitarios/de integración con Vitest.
+- 7 escenarios E2E ejecutados en desktop y móvil (14 casos).
+- `npm run test:e2e` ejecuta navegación, filtro, estado vacío, errores, PDP, carrito y persistencia.
+- CI ejecuta lint, TypeScript, unitarios, build y Playwright.
 
 ## Linting
 
@@ -136,7 +152,7 @@ front/
 Entorno de prueba:
 
 - SO: Windows
-- Node.js: 18+
+- Node.js: 20.19+
 - npm: 9+
 
 ### Caso 1 - Carga de productos (PLP)
@@ -206,11 +222,11 @@ Pasos:
 
 Resultado esperado:
 
-- El contador incrementa y persiste tras recarga.
+- El contador muestra el valor confirmado por el backend y persiste tras recarga.
 
 Resultado obtenido:
 
-- OK.
+- El flujo finaliza correctamente. Debido a la limitación conocida del backend externo, actualmente el valor confirmado siempre es `1`.
 
 ### Caso 6 - Cache cliente (TTL 1 hora)
 
@@ -261,6 +277,5 @@ Evidencias incluidas:
 
 ## Mejoras futuras sugeridas
 
-- Mas tests de integracion (PDP y flujo de add to cart).
 - Skeletons de carga por card.
-- Manejo centralizado de errores de API.
+- Internacionalización si se incorporan más idiomas.

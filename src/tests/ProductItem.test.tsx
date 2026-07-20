@@ -4,8 +4,12 @@ import ProductItem from '../components/ProductItem'
 
 test('renders product info and link', () => {
   render(
-    <MemoryRouter>
-      <ProductItem product={{ id: '11', brand: 'Apple', model: 'iPhone', price: 999 }} />
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
+      <ProductItem
+        product={{ id: '11', brand: 'Apple', model: 'iPhone', price: 999 }}
+      />
     </MemoryRouter>
   )
 
@@ -21,11 +25,13 @@ test('renders product info and link', () => {
 
 test('renders fallback values when image and price are missing', () => {
   render(
-    <MemoryRouter>
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <ProductItem product={{ id: '12', brand: 'Moto', model: 'G' }} />
     </MemoryRouter>
   )
 
-  expect(screen.getByText('No image')).toBeTruthy()
+  expect(screen.getByText('Sin imagen')).toBeTruthy()
   expect(screen.getByText('—')).toBeTruthy()
 })

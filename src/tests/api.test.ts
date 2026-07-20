@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { addToCart, getPersistedCartCount, getProductById, getProducts } from '../api'
+import {
+  addToCart,
+  getPersistedCartCount,
+  getProductById,
+  getProducts
+} from '../api'
 
 describe('api module', () => {
   const fetchMock = vi.fn()
@@ -32,21 +37,29 @@ describe('api module', () => {
     await expect(getProductById('9')).rejects.toThrow('Failed to fetch product')
   })
 
-  test('addToCart increments persisted count when server count is stale', async () => {
+  test('addToCart treats the server count as source of truth', async () => {
     localStorage.setItem('cartCount', '4')
     fetchMock.mockResolvedValue({ ok: true, json: async () => ({ count: 1 }) })
 
-    const response = await addToCart({ id: '1', colorCode: 10, storageCode: 20 })
+    const response = await addToCart({
+      id: '1',
+      colorCode: 10,
+      storageCode: 20
+    })
 
-    expect(response.count).toBe(5)
-    expect(localStorage.getItem('cartCount')).toBe('5')
+    expect(response.count).toBe(1)
+    expect(localStorage.getItem('cartCount')).toBe('1')
   })
 
   test('addToCart keeps server count when it is greater than local count', async () => {
     localStorage.setItem('cartCount', '1')
     fetchMock.mockResolvedValue({ ok: true, json: async () => ({ count: 6 }) })
 
-    const response = await addToCart({ id: '1', colorCode: 10, storageCode: 20 })
+    const response = await addToCart({
+      id: '1',
+      colorCode: 10,
+      storageCode: 20
+    })
 
     expect(response.count).toBe(6)
     expect(localStorage.getItem('cartCount')).toBe('6')

@@ -1,4 +1,4 @@
-const API_BASE = 'https://itx-frontend-test.onrender.com'
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? 'https://itx-frontend-test.onrender.com'
 const CACHE_TTL = 1000 * 60 * 60 // 1 hour
 
 function _getCache<T>(key: string): T | null{
